@@ -4,7 +4,7 @@ Steam API for the Godot game engine. For the Windows and Linux platform.
 How to use
 ----------
 - Download [Steamworks SDK](https://partner.steamgames.com); this requires a Steam developer account.
-- Download [Godot source](https://github.com/godotengine/godot); preferably 2.3 or higher. 
+- Download [Godot source](https://github.com/godotengine/godot); preferably 2.0.3 or higher. 
 - Copy SDK files:
 
   ```
@@ -28,7 +28,7 @@ How to use
   ```
 - Move the "godotsteam" directory inside the "modules" directory on the Godot source. Recompile for your platform.
 
-  For Linux, if not using Godot 2.3 or higher, you must add ```openssl=no``` when compile because it has problem with libcrypto (class StreamPeerSSL can't use).
+  For Linux, if not using Godot 2.0.3 or higher, you must add ```openssl=no``` when compile because it has problem with libcrypto (class StreamPeerSSL can't use).
   
   For Windows it's highly advised to use Visual Studio. With some extra steps MinGW will work, but most likely with limited functionality.
 
