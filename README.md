@@ -1,13 +1,11 @@
-# GodotSteam
-Steam api for Godot game engine.
-
-For Windows and Linux platform.
-
+# Godot Steam
+Steam API for the Godot game engine. For the Windows and Linux platform.
 
 How to use
 ----------
-- Download [Steamworks SDK](https://partner.steamgames.com).
-- Copy:
+- Download [Steamworks SDK](https://partner.steamgames.com); this requires a Steam developer account.
+- Download [Godot source](https://github.com/godotengine/godot); preferably 2.3 or higher. 
+- Copy SDK files:
 
   ```
   sdk/public
@@ -28,187 +26,129 @@ How to use
   godotsteam/register_types.cpp
   godotsteam/register_types.h
   ```
-- Drop the "godotsteam" directory inside the "modules" directory on the Godot source. Recompile for your platform.
+- Move the "godotsteam" directory inside the "modules" directory on the Godot source. Recompile for your platform.
 
-  For Linux you must add ```openssl=no``` when compile because it has problem with lib crypto (class StreamPeerSSL may can't use).
+  For Linux, if not using Godot 2.3 or higher, you must add ```openssl=no``` when compile because it has problem with libcrypto (class StreamPeerSSL can't use).
   
   For Windows it's highly advised to use Visual Studio. With some extra steps MinGW will work, but most likely with limited functionality.
 
-- Copy shared library (steam_api) to godot binary place, should look like this:
+- Copy shared library (steam_api) from /sdk/redistributable_bin/ folders to Godot binary location, should look like this (depending on target OS):
 
-  Linux 32
+  Linux 32/64-Bit
   ```
-  ./linux32/libsteam_api.so
+  ./libsteam_api.so
   ./godot_binary
   ```
   
-  Linux 64
-  ```
-  ./linux64/libsteam_api.so
-  ./godot_binary
-  ```
-  
-  Windows 32
+  Windows 32-Bit
   ```
   ./steam_api.dll
   ./godot_binary.exe
   ```
   
-  Windows 64
+  Windows 64-Bit
   ```
   ./steam_api64.dll
   ./godot_binary.exe
   ```
+- Game must ship with exe, Steam API DLL or SO, and steam_appid.txt to function.
 
-API Reference
+Steamworks API Reference
 -------------
-Steam
+I rewrote the project and pulled, what I thought, the most useful and common features of the Steamworks API.  Below they are broken up by group and listed as they can be called in your code.
 ```
-int init()
-	Needs to be called in order for this module to work properly. Returns:
-		OK - if everything initialized properly
-		FAILED - if initialization failed, nothing will work
-		ERR_NO_CLIENT - if there is no Steam client running, probably nothing will work
-		ERR_NO_CONNECTION - initialized, but can't connect to Steam servers.
-			Most of functionality will be restored once you connect (check "connection_changed" signal)
+Steam.steamInit()
+	Needs to be called in order for this module to work properly. Returns true if success (though the script seems to say it'll return something else).
 
-void run_callbacks()
-	This is required for many functions to work properly (f.e. for users to emit "avatar_loaded" signal).
-	It should be called at least few times a second. Recommended to use it inside "_process".
-
-SteamUser get_user()
-	Returns current Steam user (client).
-
-int get_appid()
-	Returns game Steam AppID
-
-String get_userdata_path()
-	Returns steam userdata path ( something like "C:\Progam Files\Steam\userdata\<SteamID>\<AppID>\local" )
-
-void set_server_info( SteamID server, String server_ip, int port ) 
-	Updates info about server you are playing on.
-
-void set_game_info( String key, String value )
-	This data is automatically shared between friends who are in the same game
-	Each user has a set of Key/Value pairs. Up to 20 different keys can be set
-	There are two magic keys:
-			"status"  - string that will show up in the 'view game info' dialog in the Steam friends list
-			"connect" - string that contains the command-line for how a friend can connect to a game
-	Use empty string "" to erase the key.
-
-bool clear_game_info()
-	Erases all data set.
-
-Array get_friends( int filter=NOT_OFFLINE )
-	Returns Array of `SteamUser` from your friends list. List is filtered by given filter, which can be:
-	OFFLINE|ONLINE|BUSY|AWAY|SNOOZE|LF_TRADE|LF_PLAY|NOT_OFFLINE|ALL
-
-Array get_groups()
-	Returns Array of `SteamGroup`.
-
-Array get_recent_players()
-	Returns users you recently played this game with. 
-
-bool overlay_is_enabled()
-	Returns true if the overlay is running & the user can access it. The overlay process could take a few seconds to
-	start & hook the game process, so this function will initially return false while the overlay is loading.
-
-void overlay_set_notification_pos( int(0-3) pos )
-	Change position(corner) at which notifications (messages, etc.) will be displayed.
-	Constants: TOP_LEFT, TOP_RIGHT, BOT_LEFT, BOT_RIGHT.
-
-void overlay_open( String type="" )
-	Opens Steam overlay. Optional types are (not case-sensitive), not all tested:
-	"Friends", "Community", "Players", "Settings", "OfficialGameGroup", "Stats", "Achievements".
-
-void overlay_open_user( String type="", SteamID user )
-	Type "chat" can be opened for both `SteamUser` and `SteamGroup`. Valid types are:
-		"steamid", "chat", "jointrade", "stats", "achievements", 
-		"friendadd", "friendremove", "friendrequestaccept", "friendrequestignore"
-	Barely tested.
-
-void overlay_open_url( String url )
-	Opens URL using Steam overlay web browser
-
-void overlay_open_store( int appID=0 )
-	Opens specified app store site. If invalid or none given, main Steam store site will open.
-
-
-
-Signals:
-overlay_toggled( bool active )
-	Emmited when Steam overlay is opened or closed.
-connection_changed( bool connected )
-	Emmited when connection to Steam servers is lost or renewed.
+Steam.isSteamRunning()
+	Checks that Steam is indeed running. Returns true if Steam is on and running.
 ```
-SteamID
+Apps
 ```
-bool is_valid()
-	Returns true if it's valid (got proper ID assigned).
+Steam.hasOtherApp( AppID )
+	Checks if user owns a game or application by checking the App ID. Returns true if user owns game or application given.
 
-int get_steamID()
-	Returns SteamID.
+Steam.getDLCCount()
+	Should check how many DLC user has for running game. Returns number of DLC.
 
-int get_accountID()
-	Returns AccountID. Usually the same as SteamID.
+Steam.isDLCInstalled( AppID )
+	Checks if given DLC is installed; must pass App ID of DLC. Returns true if DLC is indeed installed.
 
-int get_account_type()
-	Returns account type associated to this SteamID. 
-	Usually: TYPE_INDIVIDUAL|TYPE_GROUP|TYPE_CHAT|TYPE_GAMESERVER.
-
-int get_universe()
-	Returns associated universe. Probably always UNIVERSE_PUBLIC.
-
-String get_profile_url()
-	Returns string that can be used (using web browser) to open this user or group profile page.
-	Only valid for TYPE_INDIVIDUAL|TYPE_GROUP.
+Steam.requestAppProofOfPurchaseKey( AppID )
+	Should send back key for given App ID. Requires callback and may not function.
 ```
-SteamUser (extends SteamID)
+Friends
 ```
-String get_name()
-	Returns user nickname.
+Steam.getFriendCount()
+	Gives the number of friends the user has. Returns an integer.
 
-int get_state()
-	Returns: OFFLINE|ONLINE|BUSY|AWAY|SNOOZE|LF_TRADE|LF_PLAY
-
-bool load_avatar(int size)
-	Loads user avatar. After avatar gets loaded, signal "avatar_loaded", containing 2 arguments -
-	size and avatar as `Image`, will be emitted.
-	Returns false if avatar won't be loaded (probably only if: invalid size given or steam api not working)
-	Valid sizes: AVATAR_SMALL|AVATAR_MEDIUM|AVATAR_LARGE
-					(32x32)		(64x64)		 (184x184)
-
-int user_get_steamlevel()
-	Returns user Steam level. 
-	It should work with USER but for me it is just returning -1.
-
-int get_user_type()
-	Returns: INVALID|YOU|USER
-
-String get_game_info( String key )
-	Retrieves value paired to given key.
-
-void request_game_info()
-	If user is in the same game, this is not needed, as the info is synced automatically.
-	Requests info about user's game. Emits "gameinfo_loaded" when done.
-
-bool is_friend()
-	Checks if this user is on your friend list.
+Steam.getPersonaName()
+	Gets the user's Steam name.
 ```
-SteamGroup (SteamID)
+Users
 ```
-String get_name()
-	Returns group name.
+Steam.getSteamID()
+	Returns the Steam ID 3 integer.
 
-bool has_tag()
-	False if get_tag() returns empty string.
+Steam.loggedOn()
+	Checks if the user is logged onto Steam or not. Returns true or false.
 
-String get_tag()
-	Returns group tag.
-
-void open_chat()
-	Opens group chat in the overlay.
+Steam.getPlayerSteamLevel()
+	Returns the user's Steam level as an integer.
 ```
+User Stats
+```
+Steam.clearAchievement( name )
+	Will clear the given achievement from the user's account. Should return true if successful, but may return nothing.
+
+Steam.getAchievement( name )
+	Check if user has given achievement. Returns true if they indeed have it.
+
+Steam.getStatFloat( name )
+	Grabs the value of the statistic given; must use the stat's name in Steamworks back-end. Returns the value of the statistic as a float.
+
+Steam.getStatInt( name )
+	Grabs the value of the statistic given; must use the stat's name in Steamworks back-end. Returns the value of the statistic as an integer.
+
+Steam.resetAllStats( 0 or 1 )
+	Will wipe out all statistics, and achievements if set to 1, for the game for the user. Returns true if successful.
+
+Steam.requestCurrentStats()
+	Should request all current stats for the game running. May need to be used before getStatFloat or getStatInt. Returns true if successful.
+
+Steam.setAchievement( name )
+	Sets given achievement in user's account. Must be followed by Steam.storeStats() if you want the pop-up to fire. Returns true if successful.
+
+Steam.setStatFloat( name, value )
+	Sets the given float statistic; must use the stat's name in Steamworks back-end. Depending on how you set it there, depends on how the given value affects the record. Returns true if successful.
+
+Steam.setStatInt( name, value )
+	Sets the given integer statistic; must use the stat's name in Steamworks back-end. Depending on how you set it there, depends on how the given value affects the record. Returns true if successful.
+
+Steam.storeStats()
+	Stores all statistics and achievements to Steam's servers. This call should not be done often but at certain points like when an achievement is earned or saving a game session. Returns true if successful.
+```
+Utilities
+```
+Steam.getIPCountry()
+	Get the two-letter country code of the user. May be affected by VPN.
+
+Steam.isOverlayEnabled()
+	Check if the Steam overlay is currently active. Useful if game should pause when overlay is up. Returns true is overlay is open.
+
+Steam.getSteamUILanguage()
+	Gets the native language the Steam UI is using. May be useful for localization? Though this is usually handled in Steamworks back-end.
+
+Steam.getAppID()
+	Gets the running game or application's Steam ID. Not particularly useful unless paired with another function as the steam_appid.txt has this value already. Returns the integer.
+```
+
+To-Do
+-------------
+- Mac version needs to be created and tested (I do not own a Mac).
+- Add additional functionality, ideally all of the Steamworks API.
+- Rewrite the examples section to fit this new layout.
+
 License
 -------------
 MIT license

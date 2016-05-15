@@ -1,17 +1,5 @@
 extends Node
 
-
-
-
-
-
-
-
-
-
-
-
-
 func _ready():
 	get_node("User").hide()
 	
@@ -20,33 +8,6 @@ func _ready():
 #	GROUPS() # not fully done, but you can check it
 	OVERLAY()
 	GAME_INFO()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # ==========================================================================================
 #  STEAM INITIALIZATION
@@ -89,13 +50,6 @@ func _on_overlay_toggled( active ):
 # Probably none of the signals will be emitted without it
 func _process(delta):
 	Steam.run_callbacks()
-
-
-
-
-
-
-
 
 # ==========================================================================================
 #  DISPLAYING USER DATA AND AVATARS LOADING
@@ -158,13 +112,6 @@ func _on_avatar_loaded( size, avatar, sprite ):
 	# apply it to sprite
 	sprite.set_texture(tex)
 
-
-
-
-
-
-
-
 # ==========================================================================================
 #  GROUPS
 # ==========================================================================================
@@ -187,13 +134,6 @@ func GROUPS():
 	# print real groups
 	print("Normal groups: ",groups)
 
-
-
-
-
-
-
-
 # ==========================================================================================
 #  OVERLAY
 # ==========================================================================================
@@ -215,13 +155,6 @@ func OVERLAY():
 		# works same as
 	Steam.overlay_open_url(Steam.get_user().get_profile_url())
 #	Steam.overlay_open_store()
-
-
-
-
-
-
-
 
 # ==========================================================================================
 #  GAME_INFO

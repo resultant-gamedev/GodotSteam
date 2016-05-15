@@ -11,10 +11,10 @@ def configure(env):
 		env.Append(LIBS=["steam_api"])
 		#env.Append(RPATH=["."])
 		if env["bits"]=="32":
-			env.Append(RPATH=env.Literal('\\$$ORIGIN/linux32'))
+			env.Append(RPATH=env.Literal('\\$$ORIGIN'))
 			env.Append(LIBPATH=["#modules/godotsteam/sdk/redistributable_bin/linux32"])
 		elif env["bits"]=="64":
-			env.Append(RPATH=env.Literal('\\$$ORIGIN/linux64'))
+			env.Append(RPATH=env.Literal('\\$$ORIGIN'))
 			env.Append(LIBPATH=["#modules/godotsteam/sdk/redistributable_bin/linux64"])
 	elif env["platform"] == "windows":
 		steamlib = "steam_api"
@@ -40,5 +40,3 @@ def configure(env):
 			env.Append(LIBS=[ steamlib ])
 		
 		env.Append(LIBPATH=[ steamlib_path ])
-
-
