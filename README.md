@@ -1,5 +1,5 @@
 # Godot Steam
-Steam API for the Godot game engine. For the Windows and Linux platform.
+Steam API for the Godot game engine. For the Windows, Linux, and Mac platforms. Mac is currnently experimental.
 
 How to use
 ----------
@@ -39,6 +39,10 @@ How to use
   ./libsteam_api.so
   ./godot_binary
   ```
+  Mac 32-Bit
+  ```
+  ./libsteam_api.dylib
+  ./godot_binary
   
   Windows 32-Bit
   ```
@@ -51,7 +55,7 @@ How to use
   ./steam_api64.dll
   ./godot_binary.exe
   ```
-- Game must ship with exe, Steam API DLL or SO, and steam_appid.txt to function.
+- Game must ship with exe, Steam API DLL, SO, or DyLIB, and steam_appid.txt to function. Lack of Steam API DLL, SO, DyLIB (for respective OS), or steam_appid.txt will cause it to fail.
 
 Steamworks API Reference
 -------------
@@ -145,7 +149,7 @@ Steam.getAppID()
 
 To-Do
 -------------
-- Mac version needs to be created and tested (I do not own a Mac).
+- Mac version needs additional testing (I do not own a Mac).
 - Add additional functionality, ideally all of the Steamworks API.
 - Rewrite the examples section to fit this new layout.
 
