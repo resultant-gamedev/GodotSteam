@@ -43,13 +43,12 @@ How to use
   ```
   ./libsteam_api.dylib
   ./godot_binary
-  
+  ```
   Windows 32-Bit
   ```
   ./steam_api.dll
   ./godot_binary.exe
   ```
-  
   Windows 64-Bit
   ```
   ./steam_api64.dll
