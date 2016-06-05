@@ -1,5 +1,5 @@
 # Godot Steam
-Steam API for the Godot game engine. For the Windows, Linux, and Mac platforms. Mac is currnently experimental.
+Steam API for the Godot game engine. For the Windows, Linux, and Mac platforms. Mac is currently experimental.
 
 How to use
 ----------
@@ -76,6 +76,9 @@ Steam.getDLCCount()
 
 Steam.isDLCInstalled( AppID )
 	Checks if given DLC is installed; must pass App ID of DLC. Returns true if DLC is indeed installed.
+
+Steam.isSubscribedApp( AppID )
+	Checks if the game is registered to the user. Return true if the game is owned by the player.
 
 Steam.requestAppProofOfPurchaseKey( AppID )
 	Should send back key for given App ID. Requires callback and may not function.
