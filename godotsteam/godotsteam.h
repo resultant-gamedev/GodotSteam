@@ -22,6 +22,7 @@ public:
 	bool hasOtherApp(int value);
 	int getDLCCount();
 	bool isDLCInstalled(int value);
+	bool isSubscribedApp(int value);
 	void requestAppProofOfPurchaseKey(int value);
 	// Friends
 	int getFriendCount();
