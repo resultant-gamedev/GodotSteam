@@ -45,6 +45,9 @@ int Steam::getDLCCount(){
 bool Steam::isDLCInstalled(int value){
 	return SteamApps()->BIsDlcInstalled(value);
 }
+bool Steam::isSubscribedApp(int value){
+	return SteamApps()->BIsSubscribedApp(value);
+}
 void Steam::requestAppProofOfPurchaseKey(int value){
 	return SteamApps()->RequestAppProofOfPurchaseKey(value);
 }
