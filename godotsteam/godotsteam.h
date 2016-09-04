@@ -1,6 +1,8 @@
 #ifndef GODOTSTEAM_H
 #define GODOTSTEAM_H
 
+#include <steam/steam_api.h>
+
 #include "object.h"
 #include "dictionary.h"		// Contains array.h as well
 
@@ -15,6 +17,7 @@ public:
 	Steam();
 	~Steam();
 
+	CSteamID createSteamID(uint32 steamID, int accountType=-1);
 	// Steamworks
 	bool steamInit();
 	bool isSteamRunning();
@@ -27,7 +30,13 @@ public:
 	// Friends
 	int getFriendCount();
 	String getPersonaName();
+	void setGameInfo(const String& s_key, const String& s_value);
+	void clearGameInfo();
+	void inviteFriend(int id, const String& conString);
+	void setPlayedWith(int steam_id);
+	Array getRecentPlayers();
 	// Users
+	void setServerInfo(const String& server_ip, int port);
 	int getSteamID();
 	bool loggedOn();
 	int getPlayerSteamLevel();
@@ -36,7 +45,7 @@ public:
 	bool getAchievement(const String& s_key);
 	float getStatFloat(const String& s_key);
 	int getStatInt(const String& s_key);
-	bool resetAllStats(bool bAchievementsToo);
+	bool resetAllStats(bool bAchievementsToo=true);
 	bool requestCurrentStats();
 	bool setAchievement(const String& s_key);
 	bool setStatFloat(const String& s_key, float value);
@@ -51,9 +60,19 @@ public:
 protected:
 	static void _bind_methods();
 	static Steam* singleton;
+	void updateFriendList(int filter=NULL);
 
 private:
 	bool isInitSuccess;
+
+	STEAM_CALLBACK(Steam, _server_connected, SteamServersConnected_t);
+	STEAM_CALLBACK(Steam, _server_disconnected, SteamServersDisconnected_t);
+	STEAM_CALLBACK(Steam, _join_requested, GameRichPresenceJoinRequested_t);
+
+	void run_callbacks(){
+		SteamAPI_RunCallbacks();
+	}
+
 	OBJ_TYPE(Steam, Object);
 	OBJ_CATEGORY("Steam");
 };
