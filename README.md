@@ -90,6 +90,24 @@ Steam.getFriendCount()
 
 Steam.getPersonaName()
 	Gets the user's Steam name.
+
+Steam.setGameInfo( key, value )
+	Rich presence data is automatically shared beween friends in the same game. Each user has a set of key/value pairs, up to 20 can be set. Two magic keys (status, connect):
+	"status" - a UTF-8 string that will show up in the 'view game info' dialog in the Steam friends list
+	"connect" - a UTF-8 string that contains the command-line for how a friend can connect to a game
+	When setGameInfo() is called with an empty string, it deletes the key.
+
+Steam.clearGameInfo()
+	Should clear rich presence data
+
+Steam.inviteFriend ( Steam ID )
+	Send invite request to specific Steam friend.
+
+Steam.setPlayedWith ( Steam ID )
+	Sets specific friend to "played with" list of users for specific game.
+
+Steam.getRecentPlayers()
+	Show list of friends and users you have played with.
 ```
 Users
 ```
@@ -101,6 +119,9 @@ Steam.loggedOn()
 
 Steam.getPlayerSteamLevel()
 	Returns the user's Steam level as an integer.
+
+Steam.setServerInfo()
+	Resolves IP address and converts it for joining game through Steam.
 ```
 User Stats
 ```
