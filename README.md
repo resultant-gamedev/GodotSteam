@@ -91,6 +91,9 @@ Steam.getFriendCount()
 Steam.getPersonaName()
 	Gets the user's Steam name.
 
+Steam.getFriendPersonaName( Steam ID )
+	Get a user's current Steam username.
+
 Steam.setGameInfo( key, value )
 	Rich presence data is automatically shared beween friends in the same game. Each user has a set of key/value pairs, up to 20 can be set. Two magic keys (status, connect):
 	"status" - a UTF-8 string that will show up in the 'view game info' dialog in the Steam friends list
