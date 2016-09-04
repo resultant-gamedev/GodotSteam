@@ -71,6 +71,16 @@ int Steam::getFriendCount(){
 String Steam::getPersonaName(){
 	return SteamFriends()->GetPersonaName();
 }
+String Steam::getFriendPersonaName(int steamID){
+	if(SteamFriends() != NULL && steamID > 0){
+		CSteamID friendID = createSteamID(steamID);
+		bool isDataLoading = SteamFriends()->RequestUserInformation(friendID, true);
+		if(!isDataLoading){
+			return SteamFriends()->GetFriendPersonaName(friendID);
+		}
+	}
+	return "";
+}
 void Steam::setGameInfo(const String& s_key, const String& s_value){
 	// Rich presence data is automatically shared between friends in the same game
 	// Each user has a set of key/value pairs, up to 20 can be set
@@ -227,6 +237,7 @@ void Steam::_bind_methods()
 	// Friends Bind Methods
 	ObjectTypeDB::bind_method("getFriendCount", &Steam::getFriendCount);
 	ObjectTypeDB::bind_method("getPersonaName", &Steam::getPersonaName);
+	ObjectTypeDB::bind_method("getFriendPersonaName", &Steam::getFriendPersonaName);
 	ObjectTypeDB::bind_method(_MD("setGameInfo", "key", "value"), &Steam::setGameInfo);
 	ObjectTypeDB::bind_method(_MD("clearGameInfo"), &Steam::clearGameInfo);
 	ObjectTypeDB::bind_method(_MD("inviteFriend", "steam_id", "connect_string"), &Steam::inviteFriend);

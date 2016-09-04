@@ -30,6 +30,7 @@ public:
 	// Friends
 	int getFriendCount();
 	String getPersonaName();
+	String getFriendPersonaName(int steam_id);
 	void setGameInfo(const String& s_key, const String& s_value);
 	void clearGameInfo();
 	void inviteFriend(int id, const String& conString);
