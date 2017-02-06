@@ -37,7 +37,7 @@ public:
 	void setPlayedWith(int steam_id);
 	Array getRecentPlayers();
 	// Users
-	void setServerInfo(const String& server_ip, int port);
+//	void setServerInfo(const String& server_ip, int port); // Temporarily removed until fixed, broken in Godot 2.1.2
 	int getSteamID();
 	bool loggedOn();
 	int getPlayerSteamLevel();
