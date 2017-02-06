@@ -144,22 +144,23 @@ void Steam::_join_requested(GameRichPresenceJoinRequested_t* callData){
 	emit_signal("join_requested", steamID, con_string);
 }
 ///// Users
-void Steam::setServerInfo(const String& server_ip, int port){
-	if(SteamUser() == NULL){
-		return;
-	}
-	// Resolve address and convert it to INT (IP_Address) union
-	IP_Address addr(IP::get_singleton()->resolve_hostname(server_ip));
-	// Bytes are in the wrong order, need to swap them
-	for(int i=0; i<2; i++){
-		uint8 temp = addr.field[i];
-		addr.field[i] = addr.field[3-i];
-		addr.field[3-i] = temp;
-	}
-	// Create server ID based on user's ID
-	CSteamID gameserverID = SteamUser()->GetSteamID();
-	SteamUser()->AdvertiseGame(gameserverID, addr.host, port);
-}
+// setServerInfo is removed as version 2.1.2 of Godot breaks it
+//void Steam::setServerInfo(const String& server_ip, int port){
+//	if(SteamUser() == NULL){
+//		return;
+//	}
+//	// Resolve address and convert it to INT (IP_Address) union
+//	IP_Address addr(IP::get_singleton()->resolve_hostname(server_ip));
+//	// Bytes are in the wrong order, need to swap them
+//	for(int i=0; i<2; i++){
+//		uint8 temp = addr.field[i];
+//		addr.field[i] = addr.field[3-i];
+//		addr.field[3-i] = temp;
+//	}
+//	// Create server ID based on user's ID
+//	CSteamID gameserverID = SteamUser()->GetSteamID();
+//	SteamUser()->AdvertiseGame(gameserverID, addr.host, port);
+//}
 int Steam::getSteamID(){
 	CSteamID cSteamID = SteamUser()->GetSteamID();
 	return cSteamID.ConvertToUint64();
@@ -244,7 +245,7 @@ void Steam::_bind_methods()
 	ObjectTypeDB::bind_method(_MD("setPlayedWith", "steam_id"), &Steam::setPlayedWith);
 	ObjectTypeDB::bind_method("getRecentPlayers", &Steam::getRecentPlayers);
 	// User Bind Methods
-	ObjectTypeDB::bind_method(_MD("setServerInfo", "server_ip", "port"), &Steam::setServerInfo);
+//	ObjectTypeDB::bind_method(_MD("setServerInfo", "server_ip", "port"), &Steam::setServerInfo);
 	ObjectTypeDB::bind_method("getSteamID", &Steam::getSteamID);
 	ObjectTypeDB::bind_method("loggedOn", &Steam::loggedOn);
 	ObjectTypeDB::bind_method("getPlayerSteamLevel", &Steam::getPlayerSteamLevel);
