@@ -1,5 +1,5 @@
 # Godot Steam
-Steam API for the Godot game engine. For the Windows, Linux, and Mac platforms. Mac is currently experimental.
+Steam API for the Godot game engine. For the Windows, Linux, and Mac platforms.
 
 How to use
 ----------
@@ -28,9 +28,11 @@ How to use
   ```
 - Move the "godotsteam" directory inside the "modules" directory on the Godot source. Recompile for your platform.
 
-  For Linux, if not using Godot 2.0.3 or higher, you must add ```openssl=no``` when compile because it has problem with libcrypto (class StreamPeerSSL can't use).
+  **For Linux,** if not using Godot 2.0.3 or higher, you must add ```openssl=no``` when compile because it has problem with libcrypto (class StreamPeerSSL can't use).
   
-  For Windows it's highly advised to use Visual Studio. With some extra steps MinGW will work, but most likely with limited functionality.
+  **For Windows,** it's highly advised to use Visual Studio. With some extra steps MinGW will work, but most likely with limited functionality.
+  
+  **For Mac,** there shouldn't be anything extra to do outside of the Godot directions on compiliation. 
 
 - Copy shared library (steam_api) from /sdk/redistributable_bin/ folders to Godot binary location, should look like this (depending on target OS):
 
@@ -39,7 +41,7 @@ How to use
   ./libsteam_api.so
   ./godot_binary
   ```
-  Mac 32-Bit
+  Mac 32/64-Bit
   ```
   ./libsteam_api.dylib
   ./godot_binary
@@ -62,7 +64,6 @@ Steamworks API Reference
 
 To-Do
 -------------
-- Mac version needs additional testing (I do not own a Mac).
 - Add additional functionality, ideally all of the Steamworks API.
 - Rewrite the examples section to fit this new layout.
 
