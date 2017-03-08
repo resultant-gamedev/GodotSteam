@@ -1,8 +1,8 @@
 #include "godotsteam.h"
 #include <steam/steam_api.h>
 
-//#include "core/io/ip_address.h"
-//#include "core/io/ip.h"
+#include "core/io/ip_address.h"
+#include "core/io/ip.h"
 
 Steam* Steam::singleton = NULL;
 
@@ -498,6 +498,14 @@ void Steam::_low_power(LowBatteryPower_t* timeLeft){
 	uint8 power = timeLeft->m_nMinutesBatteryLeft;
 	emit_signal("low_power", power);
 }
+// When connected to a server
+void Steam::_server_connected(SteamServersConnected_t* conData){
+	emit_signal("connection_changed", true);
+}
+// When disconnected from a server
+void Steam::_server_disconnected(SteamServersDisconnected_t* conData){
+	emit_signal("connection_changed", false);
+}
 /////////////////////////////////////////////////
 ///// USERS /////////////////////////////////////
 //
@@ -525,6 +533,34 @@ String Steam::getUserDataFolder(){
 	String data_path = pchBuffer;
 	delete pchBuffer;
 	return data_path;
+}
+// (LEGACY FUNCTION) Set data to be replicated to friends so that they can join your game
+void Steam::advertiseGame(const String& server_ip, int port){
+	if(SteamUser() == NULL){
+		return;
+	}
+	// Resolve address and convert it from IP_Address struct to uint32_t
+	IP_Address addr;
+	if(server_ip.is_valid_ip_address()){
+		addr = server_ip;
+	}
+	else{
+		addr = IP::get_singleton()->resolve_hostname(server_ip, IP::TYPE_IPV4);
+	}
+	// Resolution failed - Godot 3.0 has is_invalid() to check this
+	if(addr == IP_Address()){
+		return;
+	}
+	uint32_t ip4 = *((uint32_t *)addr.get_ipv4());
+	// Swap the bytes
+	uint8_t *ip4_p = (uint8_t *)&ip4;
+	for(int i=0; i<2; i++){
+		uint8_t temp = ip4_p[i];
+		ip4_p[i] = ip4_p[3-i];
+		ip4_p[3-i] = temp;
+	}
+	CSteamID gameserverID = SteamUser()->GetSteamID();
+	SteamUser()->AdvertiseGame(gameserverID, *((uint32_t *)ip4_p), port);
 }
 /////////////////////////////////////////////////
 ///// USER STATS ////////////////////////////////
@@ -807,6 +843,7 @@ void Steam::_bind_methods(){
 	ObjectTypeDB::bind_method("loggedOn", &Steam::loggedOn);
 	ObjectTypeDB::bind_method("getPlayerSteamLevel", &Steam::getPlayerSteamLevel);
 	ObjectTypeDB::bind_method("getUserDataFolder", &Steam::getUserDataFolder);
+	ObjectTypeDB::bind_method(_MD("advertiseGame", "server_ip", "port"), &Steam::advertiseGame);
 	// User Stats Bind Methods //////////////////
 	ObjectTypeDB::bind_method("clearAchievement", &Steam::clearAchievement);
 	ObjectTypeDB::bind_method("getAchievement", &Steam::getAchievement);
@@ -850,6 +887,7 @@ void Steam::_bind_methods(){
 	ADD_SIGNAL(MethodInfo("lobby_created", PropertyInfo(Variant::INT, "lobby")));
 	ADD_SIGNAL(MethodInfo("lobby_joined", PropertyInfo(Variant::INT, "lobby"), PropertyInfo(Variant::INT, "permissions"), PropertyInfo(Variant::BOOL, "locked"), PropertyInfo(Variant::INT, "response")));
 	ADD_SIGNAL(MethodInfo("lobby_invite", PropertyInfo(Variant::INT, "inviter"), PropertyInfo(Variant::INT, "lobby"), PropertyInfo(Variant::INT, "game")));
+	ADD_SIGNAL(MethodInfo("connection_changed", PropertyInfo(Variant::BOOL, "connected")));
 	// Status constants //////////////////////////
 	BIND_CONSTANT(OFFLINE);		// 0
 	BIND_CONSTANT(ONLINE);		// 1

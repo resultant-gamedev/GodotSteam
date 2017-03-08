@@ -77,6 +77,7 @@ public:
 	bool loggedOn();
 	int getPlayerSteamLevel();
 	String getUserDataFolder();
+	void advertiseGame(const String& server_ip, int port);
 	// User Stats ///////////////////////////////
 	bool clearAchievement(const String& s_key);
 	bool getAchievement(const String& s_key);
@@ -135,6 +136,8 @@ private:
 	void _avatar_loaded(AvatarImageLoaded_t* avatarData);
 	void _leaderboard_loaded(LeaderboardFindResult_t *callData);
 	void _leaderboard_entries_loaded(LeaderboardScoresDownloaded_t *callData);
+	void _server_connected(SteamServersConnected_t* conData);
+	void _server_disconnected(SteamServersDisconnected_t* conData);
 	void run_callbacks(){
 		SteamAPI_RunCallbacks();
 	}
